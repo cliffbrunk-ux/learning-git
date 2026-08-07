@@ -3,10 +3,890 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Learning GIT</title>
+  <title>Learning Git — an animated cheat sheet</title>
+  <meta name="description" content="An animated, illustrated guide to the core concepts of Git and GitHub: repositories, branches, commits, merges, rebases, pull requests and more.">
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <h1>Learning Git</h1>
-  <h2>This is a simple website to understand the basics of working with Git and GitHub as part of the AI & Design Systems course.</h2>
+
+  <a class="skip-link" href="#repository">Skip to the concepts</a>
+
+  <!-- Arrowheads, defined once and referenced by every diagram below. -->
+  <svg class="sprite" aria-hidden="true" focusable="false">
+    <defs>
+      <marker id="head-ink" viewBox="0 0 10 10" refX="9" refY="5"
+              markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+        <path d="M0 0 10 5 0 10Z" fill="var(--ink-soft)"/>
+      </marker>
+      <marker id="head-alt" viewBox="0 0 10 10" refX="9" refY="5"
+              markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+        <path d="M0 0 10 5 0 10Z" fill="var(--alt)"/>
+      </marker>
+      <marker id="head-ok" viewBox="0 0 10 10" refX="9" refY="5"
+              markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+        <path d="M0 0 10 5 0 10Z" fill="var(--ok)"/>
+      </marker>
+    </defs>
+  </svg>
+
+  <header class="hero">
+    <div class="hero__inner">
+      <p class="hero__eyebrow">AI &amp; Design Systems</p>
+      <h1>Learning Git</h1>
+      <h2>This is a simple website to understand the basics of working with Git and GitHub as part of the AI &amp; Design Systems course.</h2>
+      <p class="hero__note">
+        Eleven concepts, each one with a plain-language explanation, the traps worth knowing about,
+        an animation of the mechanism, and somewhere to read more.
+      </p>
+    </div>
+  </header>
+
+  <nav class="chipnav" aria-label="Concepts">
+    <ul>
+      <li><a href="#repository">Repository</a></li>
+      <li><a href="#clone">Clone</a></li>
+      <li><a href="#branch">Branch</a></li>
+      <li><a href="#commit">Commit</a></li>
+      <li><a href="#pushpull">Push / Pull</a></li>
+      <li><a href="#diff">Diff</a></li>
+      <li><a href="#merge">Merge</a></li>
+      <li><a href="#rebase">Rebase</a></li>
+      <li><a href="#conflict">Merge conflict</a></li>
+      <li><a href="#pr">Pull Request</a></li>
+      <li><a href="#issue">Issue</a></li>
+    </ul>
+  </nav>
+
+  <main>
+
+    <!-- ══════════════════════════════ 01 · REPOSITORY ══════════════════════════════ -->
+    <section class="concept" id="repository">
+      <div class="concept__head">
+        <span class="concept__num">01</span>
+        <h3>Repository <em>repo</em></h3>
+        <p class="concept__tagline">The project folder, tracked by Git and hosted on GitHub et al.</p>
+      </div>
+
+      <figure class="stage">
+        <svg class="viz" data-viz="repository" viewBox="0 0 640 280" role="img"
+             aria-label="A project folder gains a hidden .git directory, which then records a chain of snapshots over time.">
+          <g class="v-folder">
+            <path class="stroke" d="M46 78h64l18 22h92a12 12 0 0 1 12 12v106a12 12 0 0 1-12 12H46a12 12 0 0 1-12-12V90a12 12 0 0 1 12-12Z"/>
+            <text class="label" x="52" y="66">your-project/</text>
+          </g>
+
+          <g class="v-file"><rect class="fill-muted" x="62" y="126" width="96" height="11" rx="5.5"/></g>
+          <g class="v-file"><rect class="fill-muted" x="62" y="148" width="132" height="11" rx="5.5"/></g>
+          <g class="v-file"><rect class="fill-muted" x="62" y="170" width="78" height="11" rx="5.5"/></g>
+
+          <g class="v-gitdir">
+            <rect class="fill-accent" x="62" y="196" width="72" height="24" rx="6"/>
+            <text class="label label--onaccent" x="98" y="212" text-anchor="middle">.git</text>
+          </g>
+
+          <path class="v-spine stroke-dash" d="M300 158h274"/>
+
+          <g class="v-snap" transform="translate(330,158)">
+            <circle class="fill-accent" r="15"/>
+            <text class="label label--small" y="-30" text-anchor="middle">a1c9</text>
+          </g>
+          <g class="v-snap" transform="translate(440,158)">
+            <circle class="fill-accent" r="15"/>
+            <text class="label label--small" y="-30" text-anchor="middle">7f02</text>
+          </g>
+          <g class="v-snap" transform="translate(550,158)">
+            <circle class="fill-accent" r="15"/>
+            <text class="label label--small" y="-30" text-anchor="middle">e4b8</text>
+          </g>
+          <text class="label label--muted v-caption" x="440" y="222" text-anchor="middle">every saved state, kept forever</text>
+        </svg>
+        <button class="replay" type="button">Replay</button>
+      </figure>
+
+      <div class="grid">
+        <div class="panel">
+          <h4>What it does</h4>
+          <p>
+            A repository is an ordinary folder plus a hidden <code>.git</code> directory sitting inside it.
+            That directory is the whole database: every snapshot you have ever saved, every branch name,
+            and every setting. Delete <code>.git</code> and you are left with plain files and no history.
+          </p>
+          <p>
+            Because the history lives <em>in the folder</em>, Git works entirely offline. GitHub is not Git —
+            it is one popular place to keep a copy of the repository so other people can reach it.
+          </p>
+        </div>
+        <div class="panel">
+          <h4>Considerations</h4>
+          <ul>
+            <li>Add a <code>.gitignore</code> before your first commit. Build output, <code>node_modules/</code>, and <code>.env</code> files do not belong in history.</li>
+            <li>Anything you commit is <strong>permanent</strong>. A leaked API key is not fixed by deleting it in a later commit — rotate the key.</li>
+            <li>Git is built for text. Large binaries (video, PSDs) bloat the repo forever; use Git LFS or keep them elsewhere.</li>
+            <li>One repository per deliverable project. Resist the urge to make one giant repo of unrelated things.</li>
+          </ul>
+        </div>
+        <div class="panel panel--links">
+          <h4>Resources</h4>
+          <ul>
+            <li><a href="https://git-scm.com/book/en/v2/Getting-Started-What-is-Git%3F">Pro Git — What is Git?</a> <span>the free canonical book</span></li>
+            <li><a href="https://docs.github.com/en/repositories/creating-and-managing-repositories/about-repositories">GitHub Docs — About repositories</a></li>
+            <li><a href="https://github.com/github/gitignore">github/gitignore</a> <span>ready-made ignore files per language</span></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════ 02 · CLONE ══════════════════════════════ -->
+    <section class="concept" id="clone">
+      <div class="concept__head">
+        <span class="concept__num">02</span>
+        <h3>Clone</h3>
+        <p class="concept__tagline">Download a copy of the code to your machine.</p>
+      </div>
+
+      <figure class="stage">
+        <svg class="viz" data-viz="clone" viewBox="0 0 640 280" role="img"
+             aria-label="Files travel from a hosted remote repository down to a local machine, arriving with their full history.">
+          <g class="v-remote">
+            <rect class="stroke" x="40" y="70" width="200" height="140" rx="14"/>
+            <text class="label" x="140" y="60" text-anchor="middle">origin · github.com</text>
+            <rect class="fill-muted" x="66" y="104" width="120" height="10" rx="5"/>
+            <rect class="fill-muted" x="66" y="126" width="148" height="10" rx="5"/>
+            <rect class="fill-muted" x="66" y="148" width="94" height="10" rx="5"/>
+            <rect class="fill-accent" x="66" y="172" width="56" height="18" rx="5"/>
+          </g>
+
+          <path class="v-wire stroke-dash" d="M240 140h160"/>
+          <text class="label label--small label--muted v-cmd" x="320" y="122" text-anchor="middle">git clone</text>
+
+          <g class="v-packet"><rect class="fill-accent" x="0" y="-6" width="34" height="12" rx="6"/></g>
+          <g class="v-packet"><rect class="fill-accent" x="0" y="-6" width="34" height="12" rx="6"/></g>
+          <g class="v-packet"><rect class="fill-accent" x="0" y="-6" width="34" height="12" rx="6"/></g>
+
+          <g class="v-local">
+            <rect class="stroke" x="400" y="70" width="200" height="140" rx="14"/>
+            <text class="label" x="500" y="60" text-anchor="middle">your machine</text>
+            <g class="v-arrived">
+              <rect class="fill-muted" x="426" y="104" width="120" height="10" rx="5"/>
+              <rect class="fill-muted" x="426" y="126" width="148" height="10" rx="5"/>
+              <rect class="fill-muted" x="426" y="148" width="94" height="10" rx="5"/>
+              <rect class="fill-accent" x="426" y="172" width="56" height="18" rx="5"/>
+            </g>
+          </g>
+          <text class="label label--muted v-caption" x="500" y="238" text-anchor="middle">files <tspan class="em">and</tspan> the entire history</text>
+        </svg>
+        <button class="replay" type="button">Replay</button>
+      </figure>
+
+      <div class="grid">
+        <div class="panel">
+          <h4>What it does</h4>
+          <p>
+            <code>git clone &lt;url&gt;</code> copies a remote repository onto your machine — not just the current
+            files, but every commit ever made. You end up with a fully independent repository that happens
+            to remember where it came from, under the nickname <code>origin</code>.
+          </p>
+          <p>
+            You clone once. After that you use <code>pull</code> to stay up to date; cloning again into a fresh
+            folder is a common beginner reflex and almost never what you want.
+          </p>
+        </div>
+        <div class="panel">
+          <h4>Considerations</h4>
+          <ul>
+            <li>Clone with <strong>HTTPS</strong> to get started; move to <strong>SSH</strong> once you are tired of typing tokens.</li>
+            <li>You are cloning into the folder you are currently in — <code>cd</code> somewhere sensible first.</li>
+            <li>A clone of someone else's repo gives you no write access. To contribute, <strong>fork</strong> it first, then clone your fork.</li>
+            <li>Huge repos: <code>--depth 1</code> grabs only recent history, much faster, but limits what you can inspect.</li>
+          </ul>
+        </div>
+        <div class="panel panel--links">
+          <h4>Resources</h4>
+          <ul>
+            <li><a href="https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository">GitHub Docs — Cloning a repository</a></li>
+            <li><a href="https://git-scm.com/docs/git-clone">git clone reference</a></li>
+            <li><a href="https://docs.github.com/en/authentication/connecting-to-github-with-ssh">Connecting to GitHub with SSH</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════ 03 · BRANCH ══════════════════════════════ -->
+    <section class="concept" id="branch">
+      <div class="concept__head">
+        <span class="concept__num">03</span>
+        <h3>Branch</h3>
+        <p class="concept__tagline">A safe parallel timeline to the main codebase.</p>
+      </div>
+
+      <figure class="stage">
+        <svg class="viz" data-viz="branch" viewBox="0 0 640 280" role="img"
+             aria-label="A main line of commits continues while a feature branch splits off and grows in parallel.">
+          <path class="v-mainline stroke" d="M50 190h450"/>
+          <text class="label label--small label--muted v-mainlabel" x="512" y="195">main</text>
+
+          <g class="v-c v-c--main" transform="translate(100,190)"><circle r="14"/></g>
+          <g class="v-c v-c--main" transform="translate(180,190)"><circle r="14"/></g>
+          <g class="v-c v-c--main" transform="translate(360,190)"><circle r="14"/></g>
+          <g class="v-c v-c--main" transform="translate(450,190)"><circle r="14"/></g>
+
+          <path class="v-fork stroke-alt" d="M180 190c46 0 44-90 90-90h230"/>
+          <text class="label label--small label--alt v-forklabel" x="512" y="105">feature/nav</text>
+
+          <g class="v-c v-c--feat" transform="translate(310,100)"><circle r="14"/></g>
+          <g class="v-c v-c--feat" transform="translate(385,100)"><circle r="14"/></g>
+          <g class="v-c v-c--feat" transform="translate(460,100)"><circle r="14"/></g>
+
+          <text class="label label--muted v-caption" x="320" y="248" text-anchor="middle">both timelines are real; neither disturbs the other</text>
+        </svg>
+        <button class="replay" type="button">Replay</button>
+      </figure>
+
+      <div class="grid">
+        <div class="panel">
+          <h4>What it does</h4>
+          <p>
+            A branch is a movable pointer at one commit. Creating one is instant and costs nothing — Git is not
+            copying your files, it is writing a 40-character hash into a small file. That cheapness is the whole
+            point: make a branch for every idea, and throw away the ones that do not work.
+          </p>
+          <p>
+            <code>git switch -c feature/nav</code> creates and moves onto a new branch. Work there, and <code>main</code>
+            stays exactly as it was.
+          </p>
+        </div>
+        <div class="panel">
+          <h4>Considerations</h4>
+          <ul>
+            <li>Branch from an up-to-date <code>main</code>. Branching off a stale one is how you invent conflicts.</li>
+            <li>Keep branches <strong>short-lived</strong> — days, not months. Long branches drift far from main and merge painfully.</li>
+            <li>Use a naming convention the team can scan: <code>feature/</code>, <code>fix/</code>, <code>docs/</code>.</li>
+            <li>One branch, one intent. A branch that does three unrelated things is unreviewable.</li>
+          </ul>
+        </div>
+        <div class="panel panel--links">
+          <h4>Resources</h4>
+          <ul>
+            <li><a href="https://learngitbranching.js.org/">Learn Git Branching</a> <span>the best interactive trainer there is</span></li>
+            <li><a href="https://git-scm.com/book/en/v2/Git-Branching-Branches-in-a-Nutshell">Pro Git — Branches in a Nutshell</a></li>
+            <li><a href="https://docs.github.com/en/get-started/quickstart/github-flow">GitHub flow</a> <span>the simple branching model</span></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════ 04 · COMMIT ══════════════════════════════ -->
+    <section class="concept" id="commit">
+      <div class="concept__head">
+        <span class="concept__num">04</span>
+        <h3>Commit</h3>
+        <p class="concept__tagline">A snapshot + message describing your changes.</p>
+      </div>
+
+      <figure class="stage">
+        <svg class="viz" data-viz="commit" viewBox="0 0 640 280" role="img"
+             aria-label="Edited files are staged with git add, then sealed into a single commit carrying a message.">
+          <text class="label label--small label--muted" x="92" y="48" text-anchor="middle">working files</text>
+          <text class="label label--small label--muted" x="315" y="48" text-anchor="middle">staging area</text>
+          <text class="label label--small label--muted" x="520" y="48" text-anchor="middle">history</text>
+
+          <rect class="v-stagebox stroke-dash" x="232" y="72" width="166" height="96" rx="12"/>
+
+          <g class="v-cf" transform="translate(44,84)"><rect class="fill-muted" width="96" height="14" rx="7"/></g>
+          <g class="v-cf" transform="translate(44,112)"><rect class="fill-muted" width="96" height="14" rx="7"/></g>
+          <g class="v-cf" transform="translate(44,140)"><rect class="fill-muted" width="96" height="14" rx="7"/></g>
+          <text class="label label--small label--muted v-unstaged" x="92" y="176" text-anchor="middle">left out of this commit</text>
+
+          <path class="v-arrow1 stroke-dash" d="M152 120h68"/>
+          <text class="label label--small v-add" x="186" y="106" text-anchor="middle">git add</text>
+
+          <path class="v-arrow2 stroke-dash" d="M410 120h68"/>
+          <text class="label label--small v-commitcmd" x="444" y="106" text-anchor="middle">git commit -m</text>
+
+          <g class="v-snapshot" transform="translate(520,120)">
+            <circle class="fill-accent" r="28"/>
+            <text class="label label--small label--onaccent" y="5" text-anchor="middle">9d3f</text>
+          </g>
+          <g class="v-msg" transform="translate(520,168)">
+            <rect class="fill-surface stroke" x="-100" y="0" width="200" height="30" rx="8"/>
+            <text class="label label--small" y="20" text-anchor="middle">"Add nav hover states"</text>
+          </g>
+        </svg>
+        <button class="replay" type="button">Replay</button>
+      </figure>
+
+      <div class="grid">
+        <div class="panel">
+          <h4>What it does</h4>
+          <p>
+            A commit records the state of the <em>staged</em> files, along with an author, a timestamp, a message,
+            and a pointer to the commit before it. Those pointers chained together are your history.
+          </p>
+          <p>
+            The staging area is the part beginners skip past. It exists so you can commit <em>some</em> of your
+            edits and not others — turning a messy afternoon into a few clean, reviewable steps.
+          </p>
+        </div>
+        <div class="panel">
+          <h4>Considerations</h4>
+          <ul>
+            <li>Write the message for the person reading it in six months. Explain <strong>why</strong>, not what — the diff already says what.</li>
+            <li>Imperative mood, by convention: <em>"Add empty state"</em>, not <em>"Added empty state"</em>.</li>
+            <li>Small, focused commits are easier to review and to revert. <code>git add -p</code> stages hunk by hunk.</li>
+            <li><code>git commit --amend</code> fixes the last commit — but never amend something you have already pushed and shared.</li>
+          </ul>
+        </div>
+        <div class="panel panel--links">
+          <h4>Resources</h4>
+          <ul>
+            <li><a href="https://cbea.ms/git-commit/">How to write a Git commit message</a> <span>Chris Beams, the classic</span></li>
+            <li><a href="https://www.conventionalcommits.org/">Conventional Commits</a> <span>a structured message format</span></li>
+            <li><a href="https://git-scm.com/book/en/v2/Git-Basics-Recording-Changes-to-the-Repository">Pro Git — Recording changes</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════ 05 · PUSH / PULL ══════════════════════════════ -->
+    <section class="concept" id="pushpull">
+      <div class="concept__head">
+        <span class="concept__num">05</span>
+        <h3>Push / Pull</h3>
+        <p class="concept__tagline">Upload to / download from the hosted repository.</p>
+      </div>
+
+      <figure class="stage">
+        <svg class="viz" data-viz="pushpull" viewBox="0 0 640 280" role="img"
+             aria-label="Local commits are pushed up to the remote, and a teammate's commit is pulled back down.">
+          <g>
+            <rect class="stroke" x="180" y="24" width="280" height="72" rx="14"/>
+            <text class="label" x="320" y="52" text-anchor="middle">remote · origin/main</text>
+            <g class="v-rc" transform="translate(268,74)"><circle r="11" class="fill-muted"/></g>
+            <g class="v-rc" transform="translate(302,74)"><circle r="11" class="fill-muted"/></g>
+            <g class="v-rc v-rc--new" transform="translate(336,74)"><circle r="11" class="fill-accent"/></g>
+            <g class="v-rc v-rc--mate" transform="translate(370,74)"><circle r="11" class="fill-alt"/></g>
+          </g>
+
+          <g>
+            <rect class="stroke" x="180" y="184" width="280" height="72" rx="14"/>
+            <text class="label" x="320" y="242" text-anchor="middle">local · your clone</text>
+            <g class="v-lc" transform="translate(268,208)"><circle r="11" class="fill-muted"/></g>
+            <g class="v-lc" transform="translate(302,208)"><circle r="11" class="fill-muted"/></g>
+            <g class="v-lc v-lc--new" transform="translate(336,208)"><circle r="11" class="fill-accent"/></g>
+            <g class="v-lc v-lc--mate" transform="translate(370,208)"><circle r="11" class="fill-alt"/></g>
+          </g>
+
+          <path class="v-uparrow stroke-dash" marker-end="url(#head-ink)" d="M256 180V104"/>
+          <text class="label label--small v-pushlabel" x="244" y="146" text-anchor="end">push</text>
+
+          <path class="v-downarrow stroke-dash-solid-alt" marker-end="url(#head-alt)" d="M384 104v76"/>
+          <text class="label label--small label--alt v-pulllabel" x="396" y="146">pull</text>
+        </svg>
+        <button class="replay" type="button">Replay</button>
+      </figure>
+
+      <div class="grid">
+        <div class="panel">
+          <h4>What it does</h4>
+          <p>
+            Commits live only on your machine until you <code>push</code> them. <code>git push</code> sends your
+            branch's new commits to the remote; <code>git pull</code> brings down commits other people have pushed
+            and merges them into your branch.
+          </p>
+          <p>
+            <code>pull</code> is really two commands in a trench coat: <code>fetch</code> (download) followed by
+            <code>merge</code> (combine). Running <code>git fetch</code> on its own is a safe way to look before you leap.
+          </p>
+        </div>
+        <div class="panel">
+          <h4>Considerations</h4>
+          <ul>
+            <li>Pull before you start work, and before you push. Most conflicts are just a skipped pull.</li>
+            <li>Unpushed work exists in exactly one place. A dead laptop is a real backup strategy failure.</li>
+            <li><code>git pull --rebase</code> avoids littering history with "Merge branch 'main'" commits.</li>
+            <li><strong>Never</strong> <code>push --force</code> to a shared branch — it deletes other people's commits. <code>--force-with-lease</code> is the safer relative.</li>
+          </ul>
+        </div>
+        <div class="panel panel--links">
+          <h4>Resources</h4>
+          <ul>
+            <li><a href="https://git-scm.com/book/en/v2/Git-Basics-Working-with-Remotes">Pro Git — Working with remotes</a></li>
+            <li><a href="https://docs.github.com/en/get-started/using-git/pushing-commits-to-a-remote-repository">GitHub Docs — Pushing commits</a></li>
+            <li><a href="https://git-scm.com/docs/git-push">git push reference</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════ 06 · DIFF ══════════════════════════════ -->
+    <section class="concept" id="diff">
+      <div class="concept__head">
+        <span class="concept__num">06</span>
+        <h3>Diff</h3>
+        <p class="concept__tagline">The visual difference between two versions of code from two different branches.</p>
+      </div>
+
+      <figure class="stage">
+        <svg class="viz" data-viz="diff" viewBox="0 0 640 280" role="img"
+             aria-label="Two versions of a file side by side; removed lines are marked in red and added lines in green.">
+          <text class="label label--small label--muted" x="160" y="56" text-anchor="middle">main</text>
+          <text class="label label--small label--muted" x="480" y="56" text-anchor="middle">feature/nav</text>
+
+          <rect class="stroke" x="40" y="70" width="240" height="170" rx="12"/>
+          <rect class="stroke" x="360" y="70" width="240" height="170" rx="12"/>
+
+          <g class="v-dl"><rect class="fill-muted" x="62" y="94"  width="152" height="11" rx="5.5"/></g>
+          <g class="v-dl v-dl--del"><rect x="62" y="120" width="184" height="11" rx="5.5"/></g>
+          <g class="v-dl v-dl--del"><rect x="62" y="146" width="120" height="11" rx="5.5"/></g>
+          <g class="v-dl"><rect class="fill-muted" x="62" y="172" width="168" height="11" rx="5.5"/></g>
+          <g class="v-dl"><rect class="fill-muted" x="62" y="198" width="98"  height="11" rx="5.5"/></g>
+
+          <g class="v-dr"><rect class="fill-muted" x="382" y="94"  width="152" height="11" rx="5.5"/></g>
+          <g class="v-dr v-dr--add"><rect x="382" y="120" width="196" height="11" rx="5.5"/></g>
+          <g class="v-dr v-dr--add"><rect x="382" y="146" width="142" height="11" rx="5.5"/></g>
+          <g class="v-dr v-dr--add"><rect x="382" y="172" width="110" height="11" rx="5.5"/></g>
+          <g class="v-dr"><rect class="fill-muted" x="382" y="198" width="98"  height="11" rx="5.5"/></g>
+
+          <g class="v-sign"><text class="label label--danger" x="320" y="140" text-anchor="middle">−2</text></g>
+          <g class="v-sign"><text class="label label--ok" x="320" y="170" text-anchor="middle">+3</text></g>
+
+          <line class="v-scan" x1="320" y1="70" x2="320" y2="240"/>
+        </svg>
+        <button class="replay" type="button">Replay</button>
+      </figure>
+
+      <div class="grid">
+        <div class="panel">
+          <h4>What it does</h4>
+          <p>
+            A diff compares two states and shows only what changed, line by line: removals prefixed <code>-</code>,
+            additions prefixed <code>+</code>. It is how you check your own work before committing, and how
+            reviewers read a pull request without opening every file.
+          </p>
+          <p>
+            <code>git diff</code> shows unstaged edits, <code>git diff --staged</code> shows what is about to be
+            committed, and <code>git diff main..feature</code> compares two branches.
+          </p>
+        </div>
+        <div class="panel">
+          <h4>Considerations</h4>
+          <ul>
+            <li>Read your own diff before every commit. It catches stray <code>console.log</code>s and debug code.</li>
+            <li>A changed line shows as one removal plus one addition — Git has no concept of "edited".</li>
+            <li>Reformatting a whole file drowns the real change. Keep formatting commits separate from logic commits.</li>
+            <li>Diffs of images or binaries are useless in the terminal; GitHub's image view is far better.</li>
+          </ul>
+        </div>
+        <div class="panel panel--links">
+          <h4>Resources</h4>
+          <ul>
+            <li><a href="https://git-scm.com/docs/git-diff">git diff reference</a></li>
+            <li><a href="https://github.com/dandavison/delta">delta</a> <span>a much nicer terminal diff viewer</span></li>
+            <li><a href="https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/reviewing-changes-in-pull-requests/about-comparing-branches-in-pull-requests">GitHub Docs — Comparing branches</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════ 07 · MERGE ══════════════════════════════ -->
+    <section class="concept" id="merge">
+      <div class="concept__head">
+        <span class="concept__num">07</span>
+        <h3>Merge</h3>
+        <p class="concept__tagline">Combine a branch back into another branch.</p>
+      </div>
+
+      <figure class="stage">
+        <svg class="viz" data-viz="merge" viewBox="0 0 640 280" role="img"
+             aria-label="A feature branch curves back down into main, where a merge commit joins both histories.">
+          <path class="v-mainline stroke" d="M60 190h500"/>
+          <text class="label label--muted" x="580" y="195">main</text>
+
+          <g class="v-c v-c--main" transform="translate(110,190)"><circle r="14"/></g>
+          <g class="v-c v-c--main" transform="translate(200,190)"><circle r="14"/></g>
+          <g class="v-c v-c--main" transform="translate(300,190)"><circle r="14"/></g>
+
+          <path class="v-fork stroke-alt" d="M200 190c40 0 40-90 80-90h100"/>
+          <g class="v-c v-c--feat" transform="translate(320,100)"><circle r="14"/></g>
+          <g class="v-c v-c--feat" transform="translate(400,100)"><circle r="14"/></g>
+          <text class="label label--alt" x="248" y="76">feature/nav</text>
+
+          <path class="v-join stroke-alt" d="M400 100c60 0 40 90 90 90"/>
+
+          <g class="v-mergecommit" transform="translate(490,190)">
+            <circle class="fill-accent" r="19"/>
+            <text class="label label--small label--onaccent" y="5" text-anchor="middle">M</text>
+            <text class="label label--small label--muted" y="46" text-anchor="middle">merge commit</text>
+          </g>
+        </svg>
+        <button class="replay" type="button">Replay</button>
+      </figure>
+
+      <div class="grid">
+        <div class="panel">
+          <h4>What it does</h4>
+          <p>
+            <code>git merge feature/nav</code>, run while you are on <code>main</code>, takes everything that happened
+            on the feature branch and joins it into main. When both branches have moved on, Git creates a
+            <strong>merge commit</strong> — a commit with two parents, which is what preserves both timelines.
+          </p>
+          <p>
+            If main has not moved at all, Git skips the merge commit and simply slides the pointer forward.
+            That is a <em>fast-forward</em>.
+          </p>
+        </div>
+        <div class="panel">
+          <h4>Considerations</h4>
+          <ul>
+            <li>Merging is <strong>non-destructive</strong> — nothing is rewritten, so it is the safe default on shared branches.</li>
+            <li>The cost is a busier graph. Teams that dislike this reach for rebase or squash merges instead.</li>
+            <li>Merge into an updated <code>main</code>, and run the tests <em>after</em> merging — a clean merge is not a working merge.</li>
+            <li>Halfway through a bad merge, <code>git merge --abort</code> puts everything back.</li>
+          </ul>
+        </div>
+        <div class="panel panel--links">
+          <h4>Resources</h4>
+          <ul>
+            <li><a href="https://git-scm.com/book/en/v2/Git-Branching-Basic-Branching-and-Merging">Pro Git — Basic branching and merging</a></li>
+            <li><a href="https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/incorporating-changes-from-a-pull-request/about-merge-methods-on-github">GitHub merge methods compared</a></li>
+            <li><a href="https://learngitbranching.js.org/">Learn Git Branching</a> <span>visualise merge vs rebase</span></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════ 08 · REBASE ══════════════════════════════ -->
+    <section class="concept" id="rebase">
+      <div class="concept__head">
+        <span class="concept__num">08</span>
+        <h3>Rebase</h3>
+        <p class="concept__tagline">Replay your commits on top of the latest <code>main</code>.</p>
+      </div>
+
+      <figure class="stage">
+        <svg class="viz" data-viz="rebase" viewBox="0 0 640 280" role="img"
+             aria-label="Feature commits detach from their old base and are replayed one by one on top of the newest main commit.">
+          <path class="v-mainline stroke" d="M50 200h540"/>
+          <text class="label label--muted" x="602" y="205">main</text>
+
+          <g class="v-c v-c--main" transform="translate(100,200)"><circle r="13"/></g>
+          <g class="v-c v-c--main" transform="translate(180,200)"><circle r="13"/></g>
+          <g class="v-c v-c--main" transform="translate(320,200)"><circle r="13"/></g>
+          <g class="v-c v-c--main" transform="translate(400,200)"><circle r="13"/></g>
+
+          <path class="v-oldbase stroke-dash-alt" d="M180 200c30 0 26-88 66-88h60"/>
+
+          <g class="v-rc-move" transform="translate(266,112)">
+            <circle class="fill-alt" r="13"/>
+            <text class="label label--small" y="-26" text-anchor="middle">c1</text>
+          </g>
+          <g class="v-rc-move" transform="translate(330,112)">
+            <circle class="fill-alt" r="13"/>
+            <text class="label label--small" y="-26" text-anchor="middle">c2</text>
+          </g>
+
+          <g class="v-ghost">
+            <circle cx="266" cy="112" r="13" class="ghost"/>
+            <circle cx="330" cy="112" r="13" class="ghost"/>
+          </g>
+
+          <path class="v-newbase stroke-alt" d="M400 200c40 0 30-88 70-88h60"/>
+          <text class="label label--small label--muted v-caption" x="320" y="256" text-anchor="middle">same changes, brand-new commits, linear history</text>
+        </svg>
+        <button class="replay" type="button">Replay</button>
+      </figure>
+
+      <div class="grid">
+        <div class="panel">
+          <h4>What it does</h4>
+          <p>
+            Rebasing lifts your branch's commits off their old starting point and reapplies them, one at a time,
+            on top of the newest <code>main</code>. The result is a straight line of history that looks as though
+            you started your work this morning.
+          </p>
+          <p>
+            The crucial detail: those are <strong>new commits</strong> with new hashes. The originals are discarded.
+            That is why rebasing is powerful locally and dangerous publicly.
+          </p>
+        </div>
+        <div class="panel">
+          <h4>Considerations</h4>
+          <ul>
+            <li><strong>The golden rule:</strong> never rebase commits that other people have already pulled.</li>
+            <li>Perfect for tidying your own branch before opening a PR: <code>git rebase main</code>.</li>
+            <li><code>git rebase -i</code> lets you squash, reorder, reword, and drop commits interactively.</li>
+            <li>Conflicts can resurface once per replayed commit. <code>git rebase --abort</code> is always available.</li>
+          </ul>
+        </div>
+        <div class="panel panel--links">
+          <h4>Resources</h4>
+          <ul>
+            <li><a href="https://git-scm.com/book/en/v2/Git-Branching-Rebasing">Pro Git — Rebasing</a> <span>includes the golden rule</span></li>
+            <li><a href="https://www.atlassian.com/git/tutorials/merging-vs-rebasing">Atlassian — Merging vs. rebasing</a></li>
+            <li><a href="https://git-scm.com/docs/git-rebase">git rebase reference</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════ 09 · MERGE CONFLICT ══════════════════════════════ -->
+    <section class="concept" id="conflict">
+      <div class="concept__head">
+        <span class="concept__num">09</span>
+        <h3>Merge conflict</h3>
+        <p class="concept__tagline">Two changes touched the same lines; you choose.</p>
+      </div>
+
+      <figure class="stage">
+        <svg class="viz" data-viz="conflict" viewBox="0 0 640 280" role="img"
+             aria-label="Two branches edit the same line, Git marks the collision, and a human picks the winning version.">
+          <g class="v-side v-side--a">
+            <rect class="stroke" x="30" y="40" width="160" height="56" rx="10"/>
+            <text class="label label--small label--muted" x="110" y="32" text-anchor="middle">main</text>
+            <rect class="fill-accent" x="48" y="58" width="124" height="10" rx="5"/>
+            <text class="label label--small" x="110" y="88" text-anchor="middle">color: navy</text>
+          </g>
+
+          <g class="v-side v-side--b">
+            <rect class="stroke" x="450" y="40" width="160" height="56" rx="10"/>
+            <text class="label label--small label--muted" x="530" y="32" text-anchor="middle">feature/theme</text>
+            <rect class="fill-alt" x="468" y="58" width="124" height="10" rx="5"/>
+            <text class="label label--small" x="530" y="88" text-anchor="middle">color: forest</text>
+          </g>
+
+          <path class="v-carrow stroke-thin" d="M110 98Q110 118 180 118"/>
+          <path class="v-carrow stroke-thin" d="M530 98Q530 118 300 118"/>
+
+          <g class="v-clash">
+            <rect class="conflict-box" x="130" y="118" width="210" height="122" rx="10"/>
+            <text class="label label--small label--danger" x="235" y="140" text-anchor="middle">&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD</text>
+            <text class="label label--small" x="235" y="162" text-anchor="middle">color: navy</text>
+            <text class="label label--small label--danger" x="235" y="182" text-anchor="middle">=======</text>
+            <text class="label label--small" x="235" y="204" text-anchor="middle">color: forest</text>
+            <text class="label label--small label--danger" x="235" y="226" text-anchor="middle">&gt;&gt;&gt;&gt;&gt;&gt;&gt; feature/theme</text>
+          </g>
+
+          <path class="v-resolvearrow stroke-thin" marker-end="url(#head-ok)" d="M354 178h68"/>
+          <text class="label label--small label--muted v-choose" x="388" y="162" text-anchor="middle">you choose</text>
+
+          <g class="v-resolved">
+            <rect class="resolved-box" x="432" y="150" width="178" height="58" rx="10"/>
+            <text class="label label--small label--ok" x="521" y="176" text-anchor="middle">✓ resolved</text>
+            <text class="label label--small" x="521" y="196" text-anchor="middle">color: forest</text>
+          </g>
+        </svg>
+        <button class="replay" type="button">Replay</button>
+      </figure>
+
+      <div class="grid">
+        <div class="panel">
+          <h4>What it does</h4>
+          <p>
+            When two branches change the same lines of the same file, Git refuses to guess. It stops, writes both
+            versions into the file wrapped in <code>&lt;&lt;&lt;&lt;&lt;&lt;&lt;</code> / <code>=======</code> /
+            <code>&gt;&gt;&gt;&gt;&gt;&gt;&gt;</code> markers, and hands the decision to you.
+          </p>
+          <p>
+            You edit the file until it reads the way it should, delete the markers, then <code>git add</code> it and
+            continue. A conflict is not an error — it is Git being careful.
+          </p>
+        </div>
+        <div class="panel">
+          <h4>Considerations</h4>
+          <ul>
+            <li>Resolve by <em>meaning</em>, not by picking a side. Sometimes the right answer is neither version.</li>
+            <li>Search the file for <code>&lt;&lt;&lt;&lt;</code> before committing — shipped conflict markers are a classic embarrassment.</li>
+            <li>Always re-run the app after resolving. A syntactically valid resolution can still be nonsense.</li>
+            <li>Prevention beats cure: small branches, frequent pulls, and agreed file ownership.</li>
+            <li>Stuck? <code>git merge --abort</code> returns you to before the merge, every time.</li>
+          </ul>
+        </div>
+        <div class="panel panel--links">
+          <h4>Resources</h4>
+          <ul>
+            <li><a href="https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/addressing-merge-conflicts/resolving-a-merge-conflict-using-the-command-line">GitHub Docs — Resolving a merge conflict</a></li>
+            <li><a href="https://git-scm.com/book/en/v2/Git-Branching-Basic-Branching-and-Merging#_basic_merge_conflicts">Pro Git — Basic merge conflicts</a></li>
+            <li><a href="https://git-scm.com/docs/git-mergetool">git mergetool</a> <span>use a visual three-way editor</span></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════ 10 · PULL REQUEST ══════════════════════════════ -->
+    <section class="concept" id="pr">
+      <div class="concept__head">
+        <span class="concept__num">10</span>
+        <h3>Pull Request <em>PR</em></h3>
+        <p class="concept__tagline">“Please review and merge my branch.”</p>
+      </div>
+
+      <figure class="stage">
+        <svg class="viz" data-viz="pr" viewBox="0 0 640 280" role="img"
+             aria-label="A branch opens a pull request card, which collects review comments and an approval before merging.">
+          <g class="v-prcard">
+            <rect class="stroke fill-surface" x="150" y="34" width="340" height="214" rx="14"/>
+            <text class="label label--small label--alt" x="176" y="66">feature/nav → main</text>
+            <text class="label" x="176" y="96">Add sticky navigation</text>
+            <line class="hairline" x1="176" y1="114" x2="464" y2="114"/>
+          </g>
+
+          <g class="v-review" transform="translate(176,140)">
+            <circle class="fill-muted" cx="12" cy="0" r="12"/>
+            <rect class="fill-muted" x="34" y="-7" width="150" height="12" rx="6"/>
+            <text class="label label--small label--muted" x="200" y="4">commented</text>
+          </g>
+          <g class="v-review" transform="translate(176,176)">
+            <circle class="fill-muted" cx="12" cy="0" r="12"/>
+            <rect class="fill-muted" x="34" y="-7" width="110" height="12" rx="6"/>
+            <text class="label label--small label--ok" x="200" y="4">✓ approved</text>
+          </g>
+
+          <g class="v-mergebtn" transform="translate(320,220)">
+            <rect class="fill-ok" x="-72" y="-16" width="144" height="32" rx="16"/>
+            <text class="label label--small label--onaccent" y="5" text-anchor="middle">Merge pull request</text>
+          </g>
+        </svg>
+        <button class="replay" type="button">Replay</button>
+      </figure>
+
+      <div class="grid">
+        <div class="panel">
+          <h4>What it does</h4>
+          <p>
+            A pull request is a GitHub feature, not a Git one. It says: <em>here is my branch, here is the diff,
+            please look at it before it becomes part of main.</em> It gives the team a place to comment on specific
+            lines, run automated checks, and record approval.
+          </p>
+          <p>
+            When it merges, GitHub offers three shapes: a merge commit, a squash (all your commits collapsed into
+            one), or a rebase. Most product teams squash.
+          </p>
+        </div>
+        <div class="panel">
+          <h4>Considerations</h4>
+          <ul>
+            <li>Keep them small. A 200-line PR gets a real review; a 2,000-line PR gets "LGTM".</li>
+            <li>Write the description for a reader with no context: what changed, why, and how to test it. Screenshots for UI work.</li>
+            <li>Open a <strong>draft</strong> PR early to get CI running and signal what you are working on.</li>
+            <li>Review comments are about the code, not the person. Reply to every one, even if only to say you disagree.</li>
+            <li>Link the issue it closes (<code>Closes #42</code>) so GitHub ties them together automatically.</li>
+          </ul>
+        </div>
+        <div class="panel panel--links">
+          <h4>Resources</h4>
+          <ul>
+            <li><a href="https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/about-pull-requests">GitHub Docs — About pull requests</a></li>
+            <li><a href="https://google.github.io/eng-practices/review/">Google's Code Review Developer Guide</a></li>
+            <li><a href="https://github.blog/2015-01-21-how-to-write-the-perfect-pull-request/">GitHub Blog — The perfect pull request</a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════ 11 · ISSUE ══════════════════════════════ -->
+    <section class="concept" id="issue">
+      <div class="concept__head">
+        <span class="concept__num">11</span>
+        <h3>Issue</h3>
+        <p class="concept__tagline">A ticket: bug, feature, or task.</p>
+      </div>
+
+      <figure class="stage">
+        <svg class="viz" data-viz="issue" viewBox="0 0 640 280" role="img"
+             aria-label="An issue is opened, labelled, assigned, linked to a pull request, and then closed.">
+          <g class="v-issuecard">
+            <rect class="stroke fill-surface" x="140" y="48" width="360" height="170" rx="14"/>
+            <text class="label" x="168" y="88">Nav collapses on iPad</text>
+            <text class="label label--small label--muted" x="168" y="112">#42 · opened by @cliffbrunk</text>
+            <line class="hairline" x1="168" y1="132" x2="472" y2="132"/>
+          </g>
+
+          <g class="v-chip" transform="translate(168,150)">
+            <rect class="fill-danger" width="52" height="24" rx="12"/>
+            <text class="label label--small label--onaccent" x="26" y="16" text-anchor="middle">bug</text>
+          </g>
+          <g class="v-chip" transform="translate(230,150)">
+            <rect class="fill-alt" width="86" height="24" rx="12"/>
+            <text class="label label--small label--onaccent" x="43" y="16" text-anchor="middle">responsive</text>
+          </g>
+          <g class="v-chip" transform="translate(326,150)">
+            <rect class="fill-muted" width="70" height="24" rx="12"/>
+            <text class="label label--small" x="35" y="16" text-anchor="middle">design</text>
+          </g>
+
+          <g class="v-link" transform="translate(168,194)">
+            <text class="label label--small label--alt">linked · PR #57 “Add sticky navigation”</text>
+          </g>
+
+          <g class="v-closed" transform="translate(440,90)">
+            <rect class="fill-ok" x="-48" y="-16" width="96" height="32" rx="16"/>
+            <text class="label label--small label--onaccent" y="5" text-anchor="middle">✓ Closed</text>
+          </g>
+        </svg>
+        <button class="replay" type="button">Replay</button>
+      </figure>
+
+      <div class="grid">
+        <div class="panel">
+          <h4>What it does</h4>
+          <p>
+            An issue is a unit of work with a conversation attached: a bug report, a feature request, or a task.
+            It has a number, a title, labels, an assignee, and a thread. It is the lightest project-management
+            tool that lives next to the code it describes.
+          </p>
+          <p>
+            Mentioning <code>#42</code> anywhere — a commit message, a PR, another issue — creates a permanent
+            cross-link. Merging a PR that says <code>Closes #42</code> closes the issue for you.
+          </p>
+        </div>
+        <div class="panel">
+          <h4>Considerations</h4>
+          <ul>
+            <li>A good bug report has three parts: what you did, what you expected, what happened instead.</li>
+            <li>One issue, one problem. Bundled issues never fully close.</li>
+            <li>Labels are only useful if the set is small and everyone applies them the same way.</li>
+            <li>Search before opening — duplicates fragment the discussion.</li>
+            <li>Issue templates make good reports the default rather than the exception.</li>
+          </ul>
+        </div>
+        <div class="panel panel--links">
+          <h4>Resources</h4>
+          <ul>
+            <li><a href="https://docs.github.com/en/issues/tracking-your-work-with-issues/about-issues">GitHub Docs — About issues</a></li>
+            <li><a href="https://docs.github.com/en/communities/using-templates-to-encourage-useful-issues-and-pull-requests/about-issue-and-pull-request-templates">Issue &amp; PR templates</a></li>
+            <li><a href="https://docs.github.com/en/issues/planning-and-tracking-with-projects/learning-about-projects/about-projects">GitHub Projects</a> <span>boards built from issues</span></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════ CHEAT SHEET ══════════════════════════════ -->
+    <section class="cheat" id="cheatsheet">
+      <h3>The commands, in the order you will meet them</h3>
+      <div class="cheat__grid">
+        <div><code>git clone &lt;url&gt;</code><span>copy a repo to your machine</span></div>
+        <div><code>git status</code><span>what has changed, and what is staged</span></div>
+        <div><code>git switch -c feature/x</code><span>create a branch and move onto it</span></div>
+        <div><code>git add -p</code><span>stage changes, hunk by hunk</span></div>
+        <div><code>git commit -m "…"</code><span>snapshot what is staged</span></div>
+        <div><code>git push -u origin feature/x</code><span>publish the branch</span></div>
+        <div><code>git pull --rebase</code><span>catch up without a merge commit</span></div>
+        <div><code>git diff main..feature/x</code><span>compare two branches</span></div>
+        <div><code>git log --oneline --graph</code><span>see the shape of history</span></div>
+        <div><code>git restore &lt;file&gt;</code><span>throw away uncommitted edits</span></div>
+        <div><code>git merge --abort</code><span>back out of a bad merge</span></div>
+        <div><code>git reflog</code><span>find the commit you thought you lost</span></div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="foot">
+    <p>Built for the AI &amp; Design Systems course · vanilla HTML, CSS and JavaScript, animated with GSAP.</p>
+    <p class="foot__hint">Every visual replays on click. Animations respect <code>prefers-reduced-motion</code>.</p>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
