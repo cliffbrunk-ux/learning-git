@@ -99,17 +99,19 @@ a:hover { color: var(--accent); }
 }
 
 .hero h1 {
-  font-family: var(--display);
-  font-weight: 900;
+  font-family: "Bricolage Grotesque", var(--display);
+  font-weight: 800;
   font-size: clamp(3rem, 12vw, 7.5rem);
   line-height: .92;
-  letter-spacing: -.03em;
+  letter-spacing: -.04em;
   margin: 0 0 1.25rem;
 }
 
 .hero h2 {
+  font-family: "Plus Jakarta Sans", var(--body);
+  font-style: italic;
   font-size: clamp(1.15rem, 2.4vw, 1.6rem);
-  font-weight: 600;
+  font-weight: 500;
   line-height: 1.35;
   max-width: 34ch;
   margin: 0 0 1.5rem;
