@@ -170,8 +170,10 @@ a:hover { color: var(--accent); }
 
 .concept__num {
   display: block;
-  font-family: var(--mono);
-  font-size: .8rem;
+  font-family: "Plus Jakarta Sans", var(--body);
+  font-style: italic;
+  font-weight: 500;
+  font-size: clamp(1.1rem, 2vw, 1.4rem);
   letter-spacing: .18em;
   color: var(--accent);
   margin-bottom: .5rem;
